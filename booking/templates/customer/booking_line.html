@@ -1,0 +1,399 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Bookings | 24k Salon Booking System{% endblock %}
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, #f7e7ff 0%, #e7f0ff 100%);
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.booking-header {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px 0 rgba(40, 45, 58, 0.10);
+    max-width: 900px;
+    margin: 22px auto 0 auto;
+    padding: 28px 28px 16px 32px;
+    text-align: left;
+}
+.booking-header h2 {
+    color: #7044ea;
+    font-weight: 700;
+    font-size: 1.63rem;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+}
+
+.booking-filter {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 3px 16px 0 rgba(64, 45, 158, 0.08);
+    max-width: 900px;
+    margin: 18px auto 0 auto;
+    padding: 20px 32px 13px 26px;
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 22px;
+    background: #f7f5ff;
+    padding: 14px 16px 10px 14px;
+    border-radius: 9px;
+    align-items: flex-end;
+    position: relative;
+}
+.filter-form .form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    max-width: 220px;
+    flex: 1 1 150px;
+}
+.filter-form .form-group.service-field-group {
+    flex-direction: row;
+    align-items: flex-end;
+    min-width: 230px;
+    max-width: 330px;
+    flex-basis: 240px;
+    flex-grow: 2;
+}
+.filter-form .form-group.service-field-group label {
+    margin-bottom: 0;
+    margin-right: 8px;
+    font-weight: 500;
+}
+.filter-form .form-group.service-field-group select {
+    flex: 1 1 auto;
+    max-width: 180px;
+    margin-bottom: 0;
+    margin-right: 4px;
+}
+
+/* BEGIN FIX: new button group for proper alignment */
+.filter-form .form-group.actions-group {
+    min-width: 120px;
+    max-width: 160px;
+    flex: 0 0 120px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 6px;
+    margin-left: 0;
+}
+/* Remove old .form-actions from service-field-group */
+.filter-form .form-actions {
+    display: none !important;
+}
+/* END FIX */
+
+.filter-form .btn {
+    background: #7044ea;
+    color: #fff;
+    border-radius: 7px;
+    border: none;
+    padding: 7px 15px;
+    font-weight: 600;
+    font-size: 0.98rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(112,68,234,0.08);
+    transition: background .17s;
+    text-decoration: none;
+    display: inline-block;
+    min-width: 64px;
+    text-align: center;
+    height: 36px;
+    line-height: 1.18;
+}
+.filter-form .btn:hover,
+.filter-form .btn:focus {
+    background: #8a6bd3;
+    color: #fff;
+    outline: none;
+}
+.errorlist {
+    color: #bb2222;
+    font-size: 0.97em;
+    background: #faeef0;
+    border-radius: 5px;
+    padding: 4px 8px 4px 8px;
+    margin: 2px 0 3px 0;
+    letter-spacing: 0.01em;
+}
+
+.booking-table {
+    background: #fff;
+    border-radius: 17px;
+    box-shadow: 0 5px 24px 0 rgba(64, 45, 158, 0.10);
+    max-width: 900px;
+    margin: 20px auto 0 auto;
+    padding: 12px 16px 14px 16px;
+}
+
+.booking-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 1em;
+}
+.booking-table th, .booking-table td {
+    padding: 13px 9px;
+    border-bottom: 1px solid #eee7fa;
+    text-align: left;
+    font-size: 1.05em;
+}
+.booking-table th {
+    background: #f7f5ff;
+    color: #7044ea;
+    font-size: 1.07em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border-top: 1.5px solid #ece4fa;
+}
+.booking-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.booking-table tr:hover td {
+    background: #f7e7ff37;
+}
+
+.booking-table .btn {
+    background: #7044ea;
+    color: #fff;
+    border-radius: 7px;
+    border: none;
+    padding: 9px 14px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0 2px;
+    box-shadow: 0 1px 8px 0 rgba(112,68,234,0.08);
+    transition: background .17s;
+    text-decoration: none;
+    display: inline-block;
+}
+.booking-table .btn:hover,
+.booking-table .btn:focus {
+    background: #8a6bd3;
+    color: #fff;
+    outline: none;
+}
+
+.booking-table span[style*="color:green"] {
+    color: #18a361 !important;
+    font-weight: 600;
+}
+
+/* Pagination centered */
+.booking-pagination {
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 16px auto 0 auto;
+    padding: 14px 16px 8px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+}
+.booking-pagination > span {
+    font-size: 1.04em;
+    color: #7044ea;
+    font-weight: 500;
+}
+.booking-pagination strong {
+    color: #fff;
+    background: #7044ea;
+    border-radius: 5px;
+    padding: 3px 7px;
+    margin: 0 2px;
+}
+.booking-pagination a {
+    color: #7044ea;
+    text-decoration: none;
+    padding: 3px 8px;
+    margin: 0 2px;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+    font-weight: 500;
+    display: inline-block;
+}
+.booking-pagination a:hover {
+    background: #eee0ff;
+    color: #5d13b7;
+}
+
+@media (max-width: 900px) {
+    .booking-header, .booking-filter, .booking-table, .booking-pagination {
+        padding-left: 1vw;
+        padding-right: 1vw;
+    }
+}
+@media (max-width: 700px) {
+    .filter-form {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    .filter-form .form-group, .filter-form .form-group.service-field-group {
+        flex: 1 1 100%;
+        min-width: 0;
+        max-width: 100%;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        margin-bottom: 4px;
+    }
+    .filter-form .form-group.actions-group {
+        width: 100%;
+        margin-top: 6px;
+        justify-content: flex-start;
+        /* ensure buttons go on their own row */
+    }
+}
+@media (max-width: 500px) {
+    .booking-header, .booking-filter, .booking-table, .booking-pagination {
+        padding: 5px 0 7px 0;
+    }
+    .filter-form {
+        padding: 6px 2px 6px 2px;
+        gap: 10px 12px;
+    }
+    .booking-table table, .booking-table thead, .booking-table tbody, .booking-table th, .booking-table td, .booking-table tr {
+        display: block;
+        width: 100%;
+    }
+    .booking-table thead {
+        display: none;
+    }
+    .booking-table td {
+        position: relative;
+        padding-left: 55%;
+        font-size: 0.97em;
+        min-height: 40px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #eee7fa;
+    }
+    .booking-table tr {
+        margin-bottom: 14px;
+        border-bottom: 2px solid #ece4fa;
+        background: white;
+    }
+    .booking-table td:before {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        width: 50%;
+        font-weight: 500;
+        color: #7044ea;
+        white-space: nowrap;
+    }
+    .booking-table td:nth-child(1):before { content: "Service"; }
+    .booking-table td:nth-child(2):before { content: "Date"; }
+    .booking-table td:nth-child(3):before { content: "Time"; }
+    .booking-table td:nth-child(4):before { content: "Payment Status"; }
+    .booking-table td:nth-child(5):before { content: "Status"; }
+    .booking-table td:nth-child(6):before { content: "Action"; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-header">
+    <h2>My Bookings</h2>
+</div>
+<div class="booking-filter">
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            {{ form.start_date.label_tag }}
+            {{ form.start_date }}
+            {% for error in form.start_date.errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.end_date.label_tag }}
+            {{ form.end_date }}
+            {% for error in form.end_date.errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group service-field-group">
+            {{ form.service_id.label_tag }}
+            {{ form.service_id }}
+        </div>
+        <div class="form-group actions-group">
+            <button type="submit" class="btn">Filter</button>
+            {% if form.data.start_date or form.data.end_date or form.data.service_id %}
+                <a href="{% url 'booking_line' %}" class="btn">Clear</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+<div class="booking-table">
+    {% if booking_lines %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Payment Status</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for booking_line in booking_lines %}
+                    <tr>
+                        <td>{{ booking_line.service.name }}</td>
+                        <td>{{ booking_line.booking.date }}</td>
+                        <td>{{ booking_line.booking.schedule.available_time|time:"h:i A" }}</td>
+                        <td><span style="color:green;">Paid</span></td>
+                        <td>{{ booking_line.get_status_display }}</td>
+                        <td>
+                            {% if booking_line.status == 'completed' %}
+                                {% if not booking_line.booking.user_has_feedback %}
+                                    <a href="{% url 'rate_booking' booking_line.booking.id %}" class="btn">Rate Us</a>
+                                {% else %}
+                                    <span style="color:green;">Rated</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have no booking lines yet.</p>
+    {% endif %}
+</div>
+<div class="booking-pagination">
+    {% if booking_lines.paginator.num_pages > 1 %}
+        <span>
+            Page {{ booking_lines.number }} of {{ booking_lines.paginator.num_pages }}
+        </span>
+        <div>
+            {% if booking_lines.has_previous %}
+                <a href="?{% if form.data.start_date %}start_date={{ form.data.start_date }}&amp;{% endif %}{% if form.data.end_date %}end_date={{ form.data.end_date }}&amp;{% endif %}{% if form.data.service_id %}service_id={{ form.data.service_id }}&amp;{% endif %}page={{ booking_lines.previous_page_number }}">Previous</a>
+            {% endif %}
+            {% for num in booking_lines.paginator.page_range %}
+                {% if booking_lines.number == num %}
+                    <strong>{{ num }}</strong>
+                {% elif num > booking_lines.number|add:'-3' and num < booking_lines.number|add:'3' %}
+                    <a href="?{% if form.data.start_date %}start_date={{ form.data.start_date }}&amp;{% endif %}{% if form.data.end_date %}end_date={{ form.data.end_date }}&amp;{% endif %}{% if form.data.service_id %}service_id={{ form.data.service_id }}&amp;{% endif %}page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if booking_lines.has_next %}
+                <a href="?{% if form.data.start_date %}start_date={{ form.data.start_date }}&amp;{% endif %}{% if form.data.end_date %}end_date={{ form.data.end_date }}&amp;{% endif %}{% if form.data.service_id %}service_id={{ form.data.service_id }}&amp;{% endif %}page={{ booking_lines.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

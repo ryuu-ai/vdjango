@@ -1,0 +1,311 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Browse Services | 24k Salon Booking System{% endblock %}
+
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, var(--accent3, #f7e7ff) 0%, #e7f0ff 100%);
+    min-height: 100vh;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+.services-title {
+    text-align: left;
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #4d2bbd;
+    margin: 40px 0 18px 0;
+    letter-spacing: 1px;
+}
+.left-align-form {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 18px;
+}
+.category-filter-form fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.field-group label {
+    color: #7044ea;
+    font-weight: 600;
+    margin-right: 6px;
+}
+.field-group select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #e0d7fa;
+    font-size: 1rem;
+    background: #fff;
+}
+ul.services-list {
+    padding: 32px 4px 24px 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    list-style: none;
+    margin: 0 auto 24px auto;
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    justify-items: center;
+}
+li.service-card {
+    background: #fff;
+    border: 1.2px solid #dad1ee;
+    border-radius: 18px;
+    box-shadow: 0 2px 14px 0 rgba(120,40,180,0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 430px;
+    max-width: 340px;
+    width: 100%;
+    padding: 0 0 18px 0;
+    transition: box-shadow 0.22s, border-color 0.22s, transform 0.16s;
+    overflow: hidden;
+    position: relative;
+}
+.card-image-half {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #faf8ff;
+    border-bottom: 1.1px solid #eee6fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.card-image-half img {
+    width: 100%;
+    height: 100%;
+    transform: scale(0.85);
+    object-fit: contain;
+    border-radius: 18px 18px 0 0;
+    background: #f5f3ff;
+    border: none;
+    display: block;
+    transition: transform 0.33s;
+}
+.card-content-half {
+    width: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 18px 0 18px;
+    box-sizing: border-box;
+}
+li.service-card h3 {
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: #7044ea;
+    margin-bottom: 8px;
+    margin-top: 0;
+    text-align: center;
+}
+li.service-card p {
+    margin: 4px 0 0 0;
+    font-size: 1.05rem;
+    color: #23272f;
+    line-height: 1.35;
+    text-align: center;
+    word-break: break-word;
+}
+li.service-card .service-desc {
+    color: #4e2b50;
+    font-size: 0.97rem;
+    background: #f7f2ff;
+    border-radius: 5px;
+    padding: 4px 4px 4px 7px;
+    margin: 4px 0 8px 0;
+    min-height: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+li.service-card .btn,
+button.btn {
+    margin-top: 14px;
+    min-width: 120px;
+    font-size: 1.07rem;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 1px 7px 0 rgba(112,68,234,0.10);
+    padding: 11px 0;
+    background: linear-gradient(90deg,#7044ea 60%,#b076ff 100%);
+    color: #fff;
+    border: none;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.16s, color 0.16s;
+}
+li.service-card .btn:hover, button.btn:hover {
+    background: linear-gradient(90deg,#8a6bd3 40%,#b076ff 100%);
+    color: #fff;
+}
+li.service-card strong {
+    color: #6e37cf;
+}
+
+/* Center the pagination bar and contents */
+nav.pagination-nav {
+    margin: 18px 0 6px 0;
+    font-size: 0.98rem;
+    border-radius: 11px;
+    padding: 7px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+nav.pagination-nav .pagination-info {
+    color: #7044ea;
+    font-weight: 500;
+    margin-bottom: 0;
+    text-align: center;
+}
+nav.pagination-nav div.page-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+nav.pagination-nav a,
+nav.pagination-nav strong {
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+nav.pagination-nav a {
+    background: #ede1fc;
+    color: #7044ea;
+    transition: background 0.16s, color 0.16s;
+    border: 1px solid #e0d9f9;
+}
+nav.pagination-nav a:hover {
+    background: #7044ea;
+    color: #fff;
+}
+nav.pagination-nav strong {
+    background: #7044ea;
+    color: #fff;
+    font-weight: 700;
+}
+p.services-empty-msg {
+    font-size: 1.03rem;
+    color: #aa4545;
+    text-align: center;
+    padding-top: 9px;
+}
+@media (max-width: 1000px) {
+    ul.services-list {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 700px;
+    }
+}
+@media (max-width: 700px) {
+    ul.services-list {
+        grid-template-columns: 1fr;
+        max-width: 93vw;
+    }
+    .card-image-half {
+        min-height: 88px;
+        aspect-ratio: 4/3;
+    }
+    .card-content-half {
+        padding: 7px 3vw 7px 3vw;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="services-title">Browse Salon Services</h2>
+
+<div class="left-align-form">
+    <form class="category-filter-form" method="get" action="">
+        <fieldset>
+            {{ form.non_field_errors }}
+            {% for field in form.visible_fields %}
+                <div class="field-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="errorlist">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </fieldset>
+        {# On category change, submit the form automatically (if widget doesn't handle this) #}
+        <noscript><button type="submit">Filter</button></noscript>
+    </form>
+</div>
+
+{% if services %}
+    <ul class="services-list">
+        {% for service in services %}
+            <li class="service-card">
+                <div class="card-image-half">
+                    {% if service.image %}
+                        <img src="{{ service.image.url }}" alt="{{ service.name }} image">
+                    {% else %}
+                        <img src="{% static 'images/default_service.png' %}" alt="No image available">
+                    {% endif %}
+                </div>
+                <div class="card-content-half">
+                    <h3>{{ service.name }}</h3>
+                    <p><strong>Category:</strong> {{ service.category.name }}</p>
+                    <p class="service-desc">{{ service.description }}</p>
+                    <p><strong>Price:</strong> ₱{{ service.price|floatformat:2 }}</p>
+                    <p>
+                      <strong>Duration:</strong>
+                      {% if service.duration_hours and service.duration_minutes %}
+                        {{ service.duration_hours }} hour{{ service.duration_hours|pluralize }} {{ service.duration_minutes }} minute{{ service.duration_minutes|pluralize }}
+                      {% elif service.duration_hours %}
+                        {{ service.duration_hours }} hour{{ service.duration_hours|pluralize }}
+                      {% elif service.duration_minutes %}
+                        {{ service.duration_minutes }} minute{{ service.duration_minutes|pluralize }}
+                      {% else %}
+                        N/A
+                      {% endif %}
+                    </p>
+                    <form method="get" action="{% url 'book_service' service.id %}">
+                        <button type="submit" class="btn">Book Now</button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    <nav class="pagination-nav" aria-label="List Pagination">
+        <span class="pagination-info">
+            Page {{ services.number }} of {{ services.paginator.num_pages }}
+        </span>
+        <div class="page-links">
+            {# Preserve category filter in pagination links #}
+            {% if services.has_previous %}
+                <a href="?{% if form.cleaned_data.category %}category={{ form.cleaned_data.category.id }}&amp;{% endif %}page={{ services.previous_page_number }}">Previous</a>
+            {% endif %}
+            {% for num in services.paginator.page_range %}
+                {% if services.number == num %}
+                    <strong>{{ num }}</strong>
+                {% elif num > services.number|add:'-3' and num < services.number|add:'3' %}
+                    <a href="?{% if form.cleaned_data.category %}category={{ form.cleaned_data.category.id }}&amp;{% endif %}page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if services.has_next %}
+                <a href="?{% if form.cleaned_data.category %}category={{ form.cleaned_data.category.id }}&amp;{% endif %}page={{ services.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </nav>
+{% else %}
+    <p class="services-empty-msg">No services found for this category.</p>
+{% endif %}
+{% endblock %}

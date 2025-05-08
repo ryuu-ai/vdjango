@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Profile{% endblock %}
+
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, #f7e7ff 0%, #e7f0ff 100%);
+    min-height: 100vh;
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.profile-page-content {
+    width: 100%;
+    padding: 42px 4vw 36px 4vw;
+    box-sizing: border-box;
+}
+.profile-header-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 8px;
+    background: #ffffffc0;
+    padding: 20px;
+    border-radius: 10px;
+}
+.profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #ece4fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #7044ea;
+    font-weight: 600;
+    object-fit: cover;
+}
+.profile-basic-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.profile-username {
+    font-size: 1.32rem;
+    font-weight: 700;
+    color: #7044ea;
+}
+.profile-fullname {
+    color: #222;
+    font-size: 1.04rem;
+    font-weight: 500;
+    margin-top: 1px;
+}
+.profile-email {
+    color: #444;
+    font-size: 0.99rem;
+    margin-top: 3px;
+}
+.profile-actions {
+    margin-top: 10px;
+    margin-bottom: 18px;
+}
+.profile-actions a {
+    background: #7044ea;
+    color: #fff;
+    border-radius: 7px;
+    border: none;
+    padding: 7px 18px;
+    font-weight: 500;
+    font-size: 1em;
+    cursor: pointer;
+    text-decoration: none;
+    margin-right: 10px;
+    box-shadow: 0 1px 8px 0 rgba(112,68,234,0.08);
+    transition: background 0.18s;
+    display: inline-block;
+}
+.profile-actions a:hover,
+.profile-actions a:focus {
+    background: #8a6bd3;
+    color: #fff;
+}
+.profile-joined {
+    color: #888;
+    font-size: 0.98em;
+    margin-top: 4px;
+    margin-bottom: 20px;
+}
+.section-header {
+    color: #7044ea;
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin: 32px 0 13px 0;
+    border-bottom: 1.5px solid #ece4fa;
+    padding-bottom: 2px;
+    letter-spacing: 0.01em;
+}
+.profile-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+    width: 100%;
+}
+.profile-list li {
+    background: #f7f5ff;
+    border-radius: 7px;
+    padding: 13px 17px;
+    margin-bottom: 12px;
+    color: #3d375c;
+    box-shadow: 0 1px 7px #dccfff25;
+    width: 100%;
+    font-size: 1em;
+}
+.profile-list li strong {
+    color: #7044ea;
+}
+.booking-info,
+.feedback-info {
+    font-size: 0.98em;
+    color: #555;
+}
+.profile-link-secondary {
+    color: #7044ea;
+    text-decoration: underline;
+    font-size: 1em;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 10px;
+}
+.profile-link-secondary:hover {
+    color: #8a6bd3;
+}
+@media (max-width: 700px) {
+    .profile-page-content {
+        padding: 24px 2vw 18px 2vw;
+    }
+    .profile-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .profile-avatar {
+        width: 54px;
+        height: 54px;
+        font-size: 1.3rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page-content">
+
+    <!-- Profile header -->
+    <div class="profile-header-row">
+        {% if user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" class="profile-avatar" alt="avatar">
+        {% else %}
+            <div class="profile-avatar">
+                {{ user.get_full_name|slice:":1"|default:user.username|slice:":1"|upper }}
+            </div>
+        {% endif %}
+        <div class="profile-basic-info">
+            <span class="profile-username">{{ user.username }}</span>
+            <span class="profile-fullname">{{ user.fullname|default:user.get_full_name }}</span>
+            <span class="profile-email">{{ user.email }}</span>
+        </div>
+    </div>
+    <div class="profile-joined">
+        Joined: {{ user.date_joined|date:"F j, Y" }}
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'edit_profile' %}">Edit Profile</a>
+    </div>
+
+    <!-- Bookings -->
+    <div class="section-header">Recent Bookings</div>
+    {% if bookings %}
+        <ul class="profile-list booking-info">
+            {% for booking in bookings %}
+                <li>
+                    <strong>{{ booking.service.name }}</strong><br>
+                    On {{ booking.date }} at {{ booking.schedule.start_time|default:"-" }}<br>
+                    Booked: {{ booking.booking_time|date:"N j, Y H:i" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="booking-info">No bookings yet.</p>
+    {% endif %}
+    <a href="{% url 'booking_line' %}" class="profile-link-secondary">View All Bookings</a>
+
+    <!-- Feedback -->
+    <div class="section-header">My Feedback</div>
+    {% if feedbacks %}
+        <ul class="profile-list feedback-info">
+            {% for feedback in feedbacks %}
+                <li>
+                    <strong>Service: {{ feedback.service.name }}</strong><br>
+                    Rating: {{ feedback.rating }} / 5<br>
+                    <span style="font-style:italic;">"{{ feedback.comment|escape }}"</span><br>
+                    {{ feedback.created_at|date:'N j, Y' }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="feedback-info">No feedback submitted.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

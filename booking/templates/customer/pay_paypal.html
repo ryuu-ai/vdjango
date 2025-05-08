@@ -1,0 +1,143 @@
+
+{% block extra_head %}
+<style>
+.paypal-container {
+    max-width: 420px;
+    margin: 34px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 28px #2c367c1a;
+    padding: 32px 22px;
+}
+.paypal-logo {
+    height: 43px;
+    display: block;
+    margin: 0 auto 12px auto;
+}
+.paypal-title {
+    font-family: Poppins, Arial, sans-serif;
+    color: #253b80;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: -1px;
+}
+.paypal-amount-container {
+    text-align: center;
+    margin-bottom: 22px;
+}
+.paypal-amount-label {
+    color: #555;
+    font-size: 1.1em;
+}
+.paypal-amount-value {
+    font-weight: 700;
+    color: #0070ba;
+    font-size: 2em;
+    display: block;
+    margin-top: 6px;
+}
+#paypal-clone-form {
+    margin: 0;
+    text-align: center;
+}
+.paypal-form-group {
+    background: #f6f7fb;
+    border-radius: 11px;
+    padding: 18px 14px 8px 14px;
+    margin: 0 0 18px 0;
+    border: 1.5px solid #e7eefa;
+}
+.paypal-form-label {
+    color: #666;
+    font-size: 0.93em;
+    margin-bottom: 3px;
+    font-weight: 500;
+    display: block;
+    text-align: left;
+}
+.paypal-email-input {
+    width: 89%;
+    background: #fafcff;
+    border-radius: 6px;
+    border: 1.3px solid #d6e0ef;
+    font-size: 1em;
+    padding: 8px 11px;
+    margin-top: 3px;
+    outline: none;
+}
+.paypal-pay-btn {
+    width: 100%;
+    background: linear-gradient(90deg,#003087 70%,#0070ba 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.13em;
+    padding: 13px 0;
+    border-radius: 9px;
+    border: none;
+    margin-top: 6px;
+    box-shadow: 0 2px 8px #00308731;
+    cursor: pointer;
+    transition: .2s;
+    display: block;
+}
+.paypal-pay-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+.paypal-btn-img {
+    height: 25px;
+    vertical-align: middle;
+    margin-right: 7px;
+    margin-top: -3px;
+}
+.paypal-form-errors {
+    color: #b13c05; 
+    background: #fff2ed;
+    border-radius: 7px;
+    margin: 14px 0 0 0;
+    padding: 7px 0 7px 0;
+    font-size: 0.97em;
+}
+.paypal-form-messages {
+    color: #00a757;
+    background: #d8f4df;
+    border-radius: 7px;
+    margin: 14px 0 0 0;
+    padding: 7px 0 7px 0;
+    font-size: 1.05em;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="paypal-container">
+    {% load static %}
+    <img src="{% static 'media/paypal.png' %}" alt="PayPal" class="paypal-logo">
+    <h2 class="paypal-title">Pay with PayPal</h2>
+    <div class="paypal-amount-container">
+        <span class="paypal-amount-label">Amount to pay:</span><br>
+        <span class="paypal-amount-value">₱{{ payment.amount }}</span>
+    </div>
+    <form method="post" id="paypal-clone-form">
+        {% csrf_token %}
+        <div class="paypal-form-group">
+            <label class="paypal-form-label">PayPal Email</label>
+            <input type="email" class="paypal-email-input" placeholder="your@email.com" required>
+        </div>
+        <button type="submit" class="paypal-pay-btn">
+            Pay Now with PayPal
+        </button>
+        {% if form.errors %}
+        <div class="paypal-form-errors">
+            {{ form.errors }}
+        </div>
+        {% endif %}
+        {% if messages %}
+        <div class="paypal-form-messages">
+            {% for message in messages %}{{ message }}{% endfor %}
+        </div>
+        {% endif %}
+    </form>
+{% endblock %}

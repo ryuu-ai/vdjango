@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Rate Your Booking{% endblock %}
+
+{% block extra_head %}
+<style>
+.rate-section {
+    max-width: 420px;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px 0 rgba(112,68,234,0.07);
+    padding: 32px 28px 28px 28px;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+.rate-section h2 {
+    color: #7044ea;
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 18px;
+}
+.rate-section p {
+    color: #23272f;
+    font-size: 1.08rem;
+    margin: 10px 0 0 0;
+    line-height: 1.5;
+    text-align: center;
+}
+.stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 2px;
+    margin: 18px 0 10px 0;
+}
+.stars input[type="radio"] {
+    display: none;
+}
+.stars label {
+    font-size: 2.2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.18s;
+}
+.stars input[type="radio"]:checked ~ label,
+.stars label:hover,
+.stars label:hover ~ label {
+    color: gold;
+}
+.rate-section textarea,
+.rate-section input[type="text"] {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ded1eb;
+    padding: 8px 10px;
+    font-size: 1rem;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    background: #f7f7fb;
+    color: #23272f;
+    resize: vertical;
+}
+.rate-section .errorlist {
+    color: #bb2222;
+    font-size: 0.97em;
+    margin: 2px 0 6px 0;
+}
+.rate-section button[type="submit"] {
+    min-width: 120px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px 0 rgba(112,68,234,0.06);
+    padding: 10px 0;
+    background: #7044ea;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s, border 0.18s;
+    margin-top: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.rate-section button[type="submit"]:hover,
+.rate-section button[type="submit"]:focus {
+    background: #fff;
+    color: #7044ea;
+    border: 1px solid #7044ea;
+}
+.rate-section .already-rated {
+    color: #00a757;
+    background: #eafaf1;
+    border-radius: 8px;
+    padding: 16px 12px;
+    margin: 18px 0;
+    text-align: center;
+    font-size: 1.08rem;
+}
+.rate-section .already-rated strong {
+    color: #7044ea;
+}
+.rate-section .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    color: #7044ea;
+    text-decoration: underline;
+    font-weight: 500;
+}
+@media (max-width: 600px) {
+    .rate-section {
+        padding: 18px 4vw 14px 4vw;
+        max-width: 98vw;
+    }
+    .rate-section h2 {
+        font-size: 1.2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rate-section">
+    <h2>Rate Booking #{{ booking.id }}: {{ booking.service.name }}</h2>
+    <p>Appointment on {{ booking.date }} at {{ booking.schedule.start_time }}</p>
+    {% if feedback_exists %}
+        <div class="already-rated">
+            <p>You have already rated this service.</p>
+            <strong>Rating:</strong> {{ feedback.rating }}★ <br>
+            <strong>Comment:</strong> {{ feedback.comment }}
+        </div>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="stars">
+                {{ form.rating }}
+                {% for error in form.rating.errors %}
+                    <div class="errorlist">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {{ form.comment.label_tag }}
+            {{ form.comment }}
+            {% for error in form.comment.errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+            <button type="submit">Submit Rating</button>
+        </form>
+    {% endif %}
+    <a href="{% url 'booking_line' %}" class="back-link">Back to My Bookings</a>
+</div>
+{% endblock %}

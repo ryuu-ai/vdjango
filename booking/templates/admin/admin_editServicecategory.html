@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Service Category - Admin | Booking Salon System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      background: #f4f6fb;
+      min-height: 100vh;
+    }
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #23395d;
+      color: #fff;
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      padding-left: 18px;
+      letter-spacing: .05em;
+      font-size: 1.08em;
+      box-shadow: 0 2px 6px rgba(34,34,36,0.05);
+    }
+    .header-title {
+      font-weight: 600;
+      font-size: 1.18em;
+      letter-spacing: .07em;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 70px;
+      margin-left: 30px;
+      background: #f0f2fa;
+      color: #385682;
+      text-decoration: none;
+      font-size: .98em;
+      border-radius: 4px;
+      padding: 8px 17px;
+      border: 1px solid #e0e1f1;
+      transition: background 0.15s;
+      box-shadow: 0 1px 6px rgba(56,86,130,0.07);
+      font-weight: 500;
+      position: relative;
+      z-index: 100;
+    }
+    .back-link:hover {
+      background: #d9e1fa;
+      color: #23395d;
+      border-color: #b5c3e6;
+    }
+    .form-container-outer {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      background: none;
+    }
+    .form-box {
+      background: #fff;
+      padding: 22px 26px 20px 26px;
+      border-radius: 10px;
+      border: 1px solid #e0e8f7;
+      max-width: 370px;
+      width: 98vw;
+      margin: 45px auto 24px auto;
+      box-shadow: 0 5px 18px rgba(53,61,130,0.07), 0 1.5px 8px 0 rgba(34, 57, 93, 0.035);
+      position: relative;
+    }
+    h2 {
+      margin: 0 0 18px 0;
+      color: #23395d;
+      font-weight: 700;
+      letter-spacing: .03em;
+      font-size: 1.18em;
+    }
+    .errorlist {
+      color: #b93c3c;
+      list-style: disc inside;
+      font-size: 0.94em;
+      margin-bottom: 6px;
+      padding-left: 0;
+    }
+    form label {
+      display: block;
+      margin: 13px 0 2px 2px;
+      font-weight: 500;
+      font-size: .95em;
+      color: #385682;
+      letter-spacing: .01em;
+    }
+    input[type="text"], textarea, select {
+      display: block;
+      width: 100%;
+      margin-top: 6px;
+      margin-bottom: 1px;
+      padding: 7px 8px;
+      font-size: .98em;
+      border: 1px solid #b9c3de;
+      border-radius: 5px;
+      background: #fafcff;
+      transition: border 0.15s, box-shadow 0.14s;
+      box-sizing: border-box;
+    }
+    input[type="file"] {
+      margin-top: 10px;
+    }
+    input[type="checkbox"] {
+      margin-top: 10px;
+      accent-color: #23395d;
+      transform: scale(1.12);
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #5b8bef;
+      outline: none;
+      background: #f3f7fe;
+      box-shadow: 0 0 0 2px #cfe3fa;
+    }
+    textarea {
+      min-height: 65px;
+      resize: vertical;
+    }
+    .form-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    button[type="submit"] {
+      padding: 9px 27px;
+      font-size: 1em;
+      font-weight: 600;
+      background: linear-gradient(90deg, #23395d 40%, #385682 100%);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 1px 5px -2px #2d346410;
+      transition: background 0.16s, transform 0.07s;
+      letter-spacing: .025em;
+    }
+    button[type="submit"]:hover {
+      background: linear-gradient(90deg, #1b2a49 40%, #23395d 100%);
+      transform: translateY(-1px) scale(1.021);
+    }
+    .cancel-link {
+      display: inline-block;
+      padding: 8px 17px;
+      margin-left: 0;
+      font-size: .98em;
+      border-radius: 4px;
+      background: #f0f2fa;
+      border: 1px solid #e0e1f1;
+      color: #385682;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      box-shadow: 0 1px 6px rgba(56,86,130,0.07);
+      font-weight: 500;
+    }
+    .cancel-link:hover {
+      background: #d9e1fa;
+      color: #23395d;
+      border-color: #b5c3e6;
+    }
+    @media (max-width: 600px) {
+      .form-box {
+        max-width: 99vw;
+        padding: 8px 2vw 8px 2vw;
+      }
+      .back-link {
+        margin-left: 7px;
+        margin-top: 66px;
+        font-size: .96em;
+      }
+    }
+    .sr-only {
+      position: absolute;
+      left: -999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <span class="header-title">Admin Panel</span>
+  </div>
+  <a href="{% url 'admin_servicecategory_list' %}" class="back-link">&larr; Back to Category List</a>
+  <div class="form-container-outer">
+    <div class="form-box">
+      <h2>Edit Service Category</h2>
+      <form method="post" autocomplete="off">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+          <button type="submit">Save</button>
+          <a href="{% url 'admin_servicecategory_list' %}" class="cancel-link">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

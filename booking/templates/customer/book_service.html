@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Book {{ service.name }} | 24k Salon Booking System{% endblock %}
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, #f7e7ff 0%, #e7f0ff 100%);
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.book-service-section {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px 0 rgba(40, 45, 58, 0.10);
+    max-width: 850px;
+    margin: 52px auto 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 340px;
+    min-width: 310px;
+}
+
+/* Left: full cover image */
+.book-service-image-area {
+    width: 42%;
+    min-width: 230px;
+    max-width: 400px;
+    height: auto;
+    min-height: 320px;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+}
+.book-service-image-area.has-img {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.book-service-image-area.no-img {
+    background: #eee0ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.book-service-image-area .img-placeholder {
+    width: 100%;
+    text-align: center;
+    color: #bbb;
+    font-size: 1.32em;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    align-self: center;
+}
+
+/* Right side: info & form */
+.book-service-info-area {
+    flex: 1;
+    padding: 36px 34px 36px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0; /* prevents overflow in flex */
+}
+
+.book-service-info-area h2 {
+    color: #7044ea;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: left;
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+}
+
+.book-service-info-area p {
+    font-size: 1.06rem;
+    color: #23272f;
+    margin-bottom: 6px;
+}
+
+.book-service-info-area form {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.book-service-info-area label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #7044ea;
+    display: block;
+    font-size: 1rem;
+}
+
+.book-service-info-area input[type="text"],
+.book-service-info-area input[type="email"],
+.book-service-info-area input[type="number"],
+.book-service-info-area input[type="password"],
+.book-service-info-area select,
+.book-service-info-area textarea {
+    width: 100%;
+    padding: 9px 13px;
+    margin-bottom: 2px;
+    border: 1.2px solid #ded1eb;
+    border-radius: 8px;
+    font-size: 1.04rem;
+    background: #f7f5ff;
+    color: #23272f;
+    transition: border 0.15s, background 0.16s;
+    box-sizing: border-box;
+}
+
+.book-service-info-area input:focus,
+.book-service-info-area select:focus,
+.book-service-info-area textarea:focus {
+    border-color: #7044ea;
+    background: #fff;
+    outline: none;
+}
+
+.book-service-info-area .errorlist {
+    color: #bb2222;
+    font-size: 0.97em;
+    margin: 3px 0 8px 0;
+    background: #faeef0;
+    border-radius: 5px;
+    padding: 6px 9px;
+    letter-spacing: 0.01em;
+}
+
+.book-service-info-area .booking-summary {
+    background: #f6e8ff;
+    border-left: 4px solid #7044ea;
+    color: #7044ea;
+    font-weight: 600;
+    border-radius: 7px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    font-size: 1.02em;
+}
+
+.book-service-info-area .btn,
+.book-service-info-area button[type="submit"] {
+    margin-top: 5px;
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1.12rem;
+    font-weight: 600;
+    border-radius: 9px;
+    box-shadow: 0 1px 8px 0 rgba(112,68,234,0.08);
+    background: #7044ea;
+    color: #fff;
+    border: none;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.book-service-info-area .btn:hover,
+.book-service-info-area button[type="submit"]:hover,
+.book-service-info-area .btn:focus,
+.book-service-info-area button[type="submit"]:focus {
+    background: #8a6bd3;
+    color: #fff;
+    outline: none;
+}
+.book-service-info-area .messages {
+    list-style: none;
+    padding: 0;
+    margin: 17px 0 0 0;
+}
+.book-service-info-area .messages li {
+    background: #e7f0ff;
+    color: #395b8e;
+    border-radius: 6px;
+    padding: 9px 12px;
+    margin-top: 7px;
+    font-size: 0.99em;
+    letter-spacing: 0.01em;
+    box-shadow: 0 1px 7px #b6c7ed40;
+}
+
+/* Responsive: Stack on small screens */
+@media (max-width: 800px) {
+    .book-service-section {
+        flex-direction: column;
+        max-width: 97vw;
+        min-height: 0;
+    }
+    .book-service-image-area,
+    .book-service-image-area.has-img,
+    .book-service-image-area.no-img {
+        width: 100vw !important;
+        min-width: 0;
+        min-height: 120px;
+        height: 160px;
+        max-width: 98vw;
+        border-radius: 0;
+    }
+    .book-service-info-area {
+        padding: 24px 12px 25px 14px;
+    }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="book-service-section">
+    {% if service.image %}
+      <div class="book-service-image-area has-img"
+           style="background-image: url('{{ service.image.url }}');">
+      </div>
+    {% else %}
+      <div class="book-service-image-area no-img">
+        <div class="img-placeholder">No Image</div>
+      </div>
+    {% endif %}
+    <div class="book-service-info-area">
+        <h2>Book: {{ service.name }}</h2>
+        <p><strong>Category:</strong> {{ service.category.name }}</p>
+        <p>{{ service.description }}</p>
+        <p><strong>Price:</strong> ₱{{ service.price|floatformat:2 }}</p>
+        <p><strong>Duration:</strong> 
+            {% if service.duration_hours %}{{ service.duration_hours }} hour{% if service.duration_hours > 1 %}s{% endif %}{% endif %}
+            {% if service.duration_minutes %} {{ service.duration_minutes }} minutes{% endif %}
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form.visible_fields %}
+                <div>
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="errorlist">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn">Confirm Booking</button>
+        </form>
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            {% if 'booking' in message.tags %}
+              <li>{{ message }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+</div>
+{% endblock %}

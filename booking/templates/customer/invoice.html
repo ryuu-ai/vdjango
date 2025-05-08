@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Invoice | 24k Salon Booking System{% endblock %}
+
+{% block content %}
+<style>
+.invoice-section {
+    max-width: 420px;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px 0 rgba(112,68,234,0.07);
+    padding: 32px 28px 28px 28px;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+.invoice-section h2 {
+    color: #7044ea;
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 24px;
+}
+.invoice-section p {
+    color: #23272f;
+    font-size: 1.08rem;
+    margin: 10px 0 0 0;
+    line-height: 1.5;
+}
+.invoice-section strong {
+    color: #7044ea;
+    font-weight: 600;
+}
+.invoice-section form {
+    display: block;
+    margin-top: 22px;
+    margin-bottom: 10px;
+}
+.invoice-section .form-row {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.invoice-section .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+.invoice-section .btn {
+    min-width: 100px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px 0 rgba(112,68,234,0.06);
+    padding: 8px 0;
+    background: #7044ea;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s, border 0.18s;
+    text-align: center;
+    display: inline-block;
+}
+.invoice-section .btn:hover, .invoice-section .btn:focus {
+    background: #fff;
+    color: #7044ea;
+    border: 1px solid #7044ea;
+}
+.invoice-section .btn-cancel {
+    background: #eee !important;
+    color: #7044ea !important;
+    border: 1px solid #dcd6ea !important;
+}
+.invoice-section .btn-cancel:hover {
+    background: #7044ea !important;
+    color: #fff !important;
+}
+.invoice-section .errorlist {
+    color: #bb2222;
+    font-size: 0.97em;
+    margin: 2px 0 6px 0;
+}
+.invoice-section ul.messages {
+    margin: 18px 0 0 0;
+    padding: 0;
+    list-style: none;
+}
+.invoice-section ul.messages li {
+    color: #bb2222;
+    font-size: 1em;
+    margin-bottom: 4px;
+}
+@media (max-width: 600px) {
+    .invoice-section {
+        padding: 18px 4vw 14px 4vw;
+        max-width: 98vw;
+    }
+    .invoice-section h2 {
+        font-size: 1.2rem;
+    }
+}
+</style>
+<div class="invoice-section">
+    <h2>Invoice</h2>
+    <p><strong>Service:</strong> {{ pending_service.name }}</p>
+    <p><strong>Category:</strong> {{ pending_service.category.name }}</p>
+    <p><strong>Date:</strong> {{ pending_date }}</p>
+    <p><strong>Time:</strong> {{ pending_schedule.available_time|time:"h:i A" }}</p>
+    <p><strong>Duration:</strong>
+        {% if pending_service.duration_hours %}{{ pending_service.duration_hours }} hour{% if pending_service.duration_hours > 1 %}s{% endif %}{% endif %}
+        {% if pending_service.duration_minutes %} {{ pending_service.duration_minutes }} minutes{% endif %}
+    </p>
+    <p><strong>Expected End Time:</strong> {{ calculated_end_time|time:"h:i A" }}</p>
+    <p><strong>Price:</strong> ₱{{ booking_price|floatformat:2 }}</p>
+    <form method="post" class="invoice-form-btns">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="form-row">
+            {{ form.method.label_tag }}
+            {{ form.method }}
+            {% for error in form.method.errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn">Pay Now</button>
+            <a href="{% url 'services' %}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

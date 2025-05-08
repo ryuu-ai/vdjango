@@ -1,0 +1,183 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register | 24k Salon Booking System{% endblock %}
+
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, var(--accent3, #f7e7ff) 0%, #e7f0ff 100%);
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+.register-section {
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px 0 rgba(112,68,234,0.07), 0 1.5px 6px rgba(70,36,150,0.04);
+    max-width: 450px;
+    width: 97vw;
+    margin: 40px auto 0 auto;
+    padding: 36px 26px 30px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.register-section h2 {
+    color: #7044ea;
+    font-weight: 700;
+    margin-bottom: 19px;
+    text-align: center;
+    font-size: 1.8rem;
+    letter-spacing: 0.035em;
+}
+
+.register-section form {
+    width: 100%;
+}
+
+.register-section label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #7044ea;
+    display: block;
+    font-size: 1rem;
+}
+
+.register-section input[type="text"],
+.register-section input[type="email"],
+.register-section input[type="password"] {
+    width: 100%;
+    padding: 9px 12px;
+    margin-bottom: 3px;
+    border: 1.3px solid #ded1eb;
+    border-radius: 7px;
+    font-size: 1.08rem;
+    background: #f7f5ff;
+    color: #23272f;
+    transition: border 0.15s, background 0.16s;
+    box-sizing: border-box;
+}
+.register-section input[type="text"]:focus,
+.register-section input[type="email"]:focus,
+.register-section input[type="password"]:focus {
+    border-color: #7044ea;
+    background: #fff;
+    outline: none;
+}
+
+.register-section .errorlist {
+    color: #bb2222;
+    font-size: 0.96em;
+    margin: 4px 0 9px 0;
+    background: #faeef0;
+    border-radius: 5px;
+    padding: 6px 8px 6px 8px;
+    letter-spacing: 0.01em;
+}
+
+.register-section .btn,
+.register-section button[type="submit"] {
+    margin-top: 8px;
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1.12rem;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 1px 8px 0 rgba(112,68,234,0.08);
+    background: #7044ea;
+    color: #fff;
+    border: none;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.17s, color 0.17s;
+}
+
+.register-section .btn:hover,
+.register-section button[type="submit"]:hover,
+.register-section .btn:focus,
+.register-section button[type="submit"]:focus {
+    background: #8a6bd3;
+    color: #fff;
+    outline: none;
+}
+
+.register-section .messages {
+    list-style: none;
+    padding: 0;
+    margin: 18px 0 0 0;
+}
+.register-section .messages li {
+    background: #f6e8ff;
+    color: #884dbe;
+    border-radius: 6px;
+    padding: 9px 12px;
+    margin-top: 7px;
+    font-size: 0.99em;
+    letter-spacing: 0.01em;
+    box-shadow: 0 1px 5px #cbb7ec34;
+}
+
+@media (max-width: 460px) {
+    .register-section {
+        padding: 18px 3vw 15px 3vw;
+        max-width: 99vw;
+    }
+    .main-single-background {
+        padding: 16px 2vw 12px 2vw;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-section">
+    <h2>Register</h2>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                {% if 'register' in message.tags %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <div style="margin-bottom: 18px;">
+                <label for="{{ field.id_for_label }}" style="display:block; margin-bottom:8px;">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+
+                {# Show password requirements after the password1 field #}
+                {% if field.name == "password1" %}
+                <div class="form-text text-muted" style="font-size: 0.98em; color: #6652b5; margin-top: 8px;">
+                    <strong>Password must:</strong>
+                    <ul style="margin: 4px 0 0 18px; padding-left: 0;">
+                        <li>Be at least 8 characters long, Unique and not similar to your username</li>
+                        <li>Must contain uppercase and lowercase</li>
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="errorlist">
+                        {{ field.errors|striptags }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn">Register</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,136 @@
+
+{% block content %}
+<style>
+.gcash-container {
+    max-width: 370px;
+    margin: 48px auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px 0 #0002;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+}
+.gcash-header {
+    background: #0c85de;
+    padding: 32px 0 18px 0;
+    text-align: center;
+}
+.gcash-header img {
+    height: 44px;
+    margin-bottom: 8px;
+}
+.gcash-header .gcash-title {
+    display: block; 
+    font-size: 2em;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+}
+.gcash-details {
+    background: #fff;
+    padding: 28px 28px 18px 28px;
+    border-radius: 0 0 16px 16px;
+}
+.gcash-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.gcash-detail-label {
+    color: #888;
+    font-size: 1em;
+    font-weight: 500;
+}
+.gcash-detail-value {
+    color: #222;
+    font-size: 1em;
+    font-weight: 600;
+    text-align: right;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.gcash-amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+.gcash-amount-label {
+    color: #888;
+    font-size: 1em;
+    font-weight: 500;
+}
+.gcash-amount-value {
+    color: #0c85de;
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.gcash-form {
+    margin-top: 18px;
+    text-align: center;
+}
+.gcash-btn {
+    background: #0c85de;
+    color: #fff;
+    padding: 0.9em 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.13em;
+    font-weight: 700;
+    width: 100%;
+    box-shadow: 0 2px 8px #0b495e22;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.gcash-btn:hover, .gcash-btn:focus {
+    background: #1076b3;
+}
+.gcash-success {
+    display: none;
+    margin-top: 16px;
+    color: #18a361;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+@media (max-width: 500px) {
+    .gcash-container {
+        max-width: 99vw;
+        margin: 16px 2vw;
+    }
+    .gcash-details {
+        padding: 18px 8vw 12px 8vw;
+    }
+}
+</style>
+<div class="gcash-container">
+    <div class="gcash-header">
+        <span class="gcash-title">GCash</span>
+    </div>
+    <div class="gcash-details">
+        <div class="gcash-detail-row">
+            <span class="gcash-detail-label">Merchant</span>
+            <span class="gcash-detail-value">Booking Salon System</span>
+        </div>
+        <div class="gcash-amount-row">
+            <span class="gcash-amount-label">Amount Due</span>
+            <span class="gcash-amount-value">₱{{ payment.amount|floatformat:2 }}</span>
+        </div>
+        <div class="gcash-detail-row" style="margin-bottom: 24px;">
+            <span class="gcash-detail-label">GCash Number</span>
+            <span class="gcash-detail-value">
+                0997123456
+            </span>
+        </div>
+        <form method="post" class="gcash-form" id="gcash-clone-form">
+            {% csrf_token %}
+            <button type="submit" class="gcash-btn" id="gcash-submit-btn">Pay Now with GCash</button>
+            <div class="gcash-success" id="gcash-success-msg">Payment Successful!</div>
+        </form>
+    </div>
+</div>
+{% endblock %}

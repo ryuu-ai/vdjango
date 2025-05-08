@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Receipt | Booking Salon System</title>
+    <style>
+        body {
+            background: #ededed;
+            margin: 0; padding: 0;
+            font-family: 'Consolas', 'Courier New';
+        }
+        .receipt {
+            max-width: 340px;
+            background: #fff;
+            margin: 40px auto 0 auto;
+            padding: 28px 26px 19px 26px;
+            border: 1.3px solid #bbb;
+            border-radius: 7px;
+            box-shadow: 0 2px 14px #ccc4;
+        }
+        .receipt-header {
+            text-align: center;
+            border-bottom: 1px dashed #bbb;
+            margin-bottom: 16px;
+            padding-bottom: 7px;
+        }
+        .receipt-title {
+            font-size: 1.07em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #243c5f;
+            font-weight: bold;
+        }
+        .receipt-info {
+            font-size: 0.97em;
+            margin-bottom: 13px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .label {
+            color: #6d6d7a;
+            min-width: 90px;
+        }
+        .value {
+            text-align: right;
+            color: #222;
+        }
+        .total-row {
+            border-top: 1px solid #bbb;
+            margin-top: 13px;
+            padding-top: 8px;
+            font-weight: bold;
+            color: #215d36;
+        }
+        .footer {
+            font-size: 0.96em;
+            text-align: center;
+            color: #888;
+            margin-top: 23px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+        }
+        .back-btn {
+            margin: 28px auto 0 auto;
+            background: #243c5f;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 7px 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            width: fit-content;
+            font-size: 0.99em;
+        }
+        .back-btn:hover { background: #385682;}
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="receipt-header">
+            <div class="receipt-title">RECEIPT</div>
+            <div class="receipt-info">
+                Booking Salon System<br>
+                Receipt #: <b>{{ booking.id }}</b> &mdash; {{ booking.date }}
+            </div>
+        </div>
+
+        <div class="info-row"><span class="label">Username</span> <span class="value">{{ booking.user.username }}</span></div>
+        <div class="info-row"><span class="label">Full Name</span> <span class="value">{{ booking.user.fullname }}</span></div>
+        <div class="info-row"><span class="label">Service</span> <span class="value">{{ service.name }}</span></div>
+        <div class="info-row"><span class="label">Time Slot</span> <span class="value">{{ booking.schedule.available_time }}</span></div>
+
+        {% if payment %}
+            <div class="total-row info-row"><span class="label">Total Paid</span> <span class="value">₱{{ payment.amount }}</span></div>
+            <div class="info-row"><span class="label">Method</span> <span class="value">{{ payment.method|capfirst }}</span></div>
+            <div class="info-row"><span class="label">Paid by</span> <span class="value">{{ payment.user.username }}</span></div>
+            <div class="info-row"><span class="label">Trans. ID</span> <span class="value">{{ payment.transaction_id }}</span></div>
+        {% else %}
+            <div class="info-row"><em>No payment found for this booking.</em></div>
+        {% endif %}
+
+        <div class="footer">
+            Thank you for your booking!
+        </div>
+    </div>
+    <a href="{% url 'admin_bookings' %}" class="back-btn">&larr; Bookings</a>
+</body>
+</html>
+ 

@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Service Management | Booking Salon System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f6f7fc;
+        }
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #23395d;
+            color: #fff;
+            z-index: 1200;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            box-shadow: 0 2px 6px rgba(34,34,36,0.05);
+        }
+        .app-header .hamburger {
+            width: 34px;
+            height: 34px;
+            background: #23395d;
+            color: #fff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.2s;
+            font-size: 26px;
+        }
+        .app-header .hamburger:hover {
+            background: #385682;
+        }
+        .app-header .header-title {
+            margin-left: 15px;
+            font-size: 1.15em;
+            font-weight: 600;
+            letter-spacing: .05em;
+            flex: 1;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 220px;
+            height: calc(100vh - 60px);
+            background: #23395d;
+            color: #fff;
+            padding-top: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 6px rgba(34,34,36,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sidebar.closed {
+            transform: translateX(-220px);
+        }
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 8px;
+        }
+        .sidebar-nav a {
+            display: block;
+            padding: 16px 28px;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 1.08em;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: #385682;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 88px 40px 28px 40px;
+            transition: margin-left 0.3s ease;
+        }
+        .sidebar.closed ~ .main-content {
+            margin-left: 0;
+        }
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 170px;
+            }
+            .sidebar.closed {
+                transform: translateX(-170px);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 70px 10px 18px 10px;
+            }
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.2);
+            z-index: 900;
+        }
+        .sidebar.opened + .sidebar-overlay {
+            display: block;
+        }
+        /* Filter bar styles */
+        .filter-bar {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-bar label {
+            font-weight: 500;
+            color: #23395d;
+            margin-right: 4px;
+        }
+        .filter-bar select, .filter-bar button, .filter-bar a {
+            font-size: 1em;
+            padding: 6px 14px;
+            border-radius: 4px;
+            border: 1px solid #b6becc;
+            outline: none;
+        }
+        .filter-bar button {
+            background: #385682;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .filter-bar button:hover { background: #23395d; }
+        .filter-bar a {
+            background: #e3ecfa;
+            border: 1px solid #b6becc;
+            color: #23395d;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+        .filter-bar a:hover { background: #cbe0fd; }
+        .btn-action {
+            display: inline-block;
+            background: #1976d2;
+            color: #fff;
+            padding: 6px 18px;
+            border: none;
+            border-radius: 4px;
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: center;
+            transition: background 0.17s;
+            text-decoration: none;
+        }
+        .btn-action.btn-edit { background: #1976d2; }
+        .btn-action.btn-edit:hover { background: #1257a4; }
+        .btn-action.btn-delete { background: #d21919; }
+        .btn-action.btn-delete:hover { background: #a31414; }
+        .btn-add-service {
+            display: inline-block;
+            background: #23395d;
+            color: #fff;
+            padding: 7px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 14px;
+            margin-top: 8px;
+            margin-right: 6px;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .btn-add-service:hover {
+            background: #385682;
+        }
+        .messages { padding: 0; margin-bottom: 18px; }
+        .messages li { color: #0a0; font-size: 16px; }
+        .actions { white-space: nowrap; }
+        table {
+            border-collapse: collapse;
+            background: #fff;
+            width: 100%;
+            margin-bottom: 14px;
+            margin-top: 16px;
+        }
+        th, td {
+            border: 1px solid #dee4f1;
+            padding: 9px 8px;
+            text-align: left;
+        }
+        th {
+            background: #e3ecfa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #f6f7fc; }
+        .pagination {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 5px 11px;
+            background: #23395d;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 2px;
+            font-size: 1em;
+        }
+        .pagination span.current { background: #385682; }
+        .pagination a:hover { background: #385682; }
+        @media (max-width: 500px) {
+            .pagination { flex-direction: column; gap: 2px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <button class="hamburger" id="sidebarToggle" aria-label="Open menu">
+            <span>&#9776;</span>
+        </button>
+        <span class="header-title">Admin Panel</span>
+    </div>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{% url 'admin_users' %}" class="{% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">Users</a>
+            <a href="{% url 'admin_services' %}" class="{% if request.resolver_match.url_name == 'admin_services' %}active{% endif %}">Services</a>
+            <a href="{% url 'admin_servicecategory_list' %}" class="{% if request.resolver_match.url_name == 'admin_servicecategory_list' %}active{% endif %}">Service Categories</a>
+            <a href="{% url 'admin_bookings' %}" class="{% if request.resolver_match.url_name == 'admin_bookings' %}active{% endif %}">Bookings</a>
+            <a href="{% url 'admin_schedule' %}" class="{% if request.resolver_match.url_name == 'admin_schedule' %}active{% endif %}">Schedules</a>
+            <a href="{% url 'admin_logout' %}" class="logout">Logout</a>
+        </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="main-content" id="mainContent">
+        <h1 style="color:#23395d">Service Management</h1>
+        <a href="{% url 'admin_add_service' %}" class="btn-add-service">Add Service</a>
+        <form class="filter-bar" method="get" action="">
+            <label for="category-select">Filter by Category:</label>
+            <select name="category" id="category-select">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == selected_category_id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filter</button>
+            {% if selected_category_id %}
+            <a href="{% url 'admin_services' %}">Clear</a>
+            {% endif %}
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Duration</th>
+                    <th>Active?</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.category.name }}</td>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description|linebreaksbr }}</td>
+                    <td>₱{{ service.price }}</td>
+                    <td>
+                        {% if service.duration_hours %}{{ service.duration_hours }} hr{% if service.duration_minutes %}, {% endif %}{% endif %}
+                        {% if service.duration_minutes %}{{ service.duration_minutes }} mins{% endif %}
+                    </td>
+                    <td>{% if service.is_active %}✔{% else %}✗{% endif %}</td>
+                    <td class="actions">
+                        <a href="{% url 'admin_edit_service' service.id %}" class="btn-action btn-edit">Edit</a>
+                        <form method="post" action="{% url 'admin_delete_service' service.id %}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete the service &quot;{{ service.name }}&quot;?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action btn-delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7"><em>No services found.</em></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            {% if services.has_previous %}
+                <a href="?page={{ services.previous_page_number }}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">&laquo; Prev</a>
+            {% endif %}
+            <span class="current">Page {{ services.number }} of {{ services.paginator.num_pages }}</span>
+            {% if services.has_next %}
+                <a href="?page={{ services.next_page_number }}{% if selected_category_id %}&category={{ selected_category_id }}{% endif %}">Next &raquo;</a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        // Sidebar JavaScript unchanged ...
+        const sidebar = document.getElementById("sidebar");
+        const toggle = document.getElementById("sidebarToggle");
+        const main = document.getElementById("mainContent");
+        const overlay = document.getElementById("sidebarOverlay");
+        let sidebarOpen = true;
+
+        function openSidebar() {
+            sidebar.classList.remove('closed');
+            overlay.style.display = (window.innerWidth <= 700) ? 'block' : 'none';
+            sidebarOpen = true;
+        }
+        function closeSidebar() {
+            sidebar.classList.add('closed');
+            overlay.style.display = 'none';
+            sidebarOpen = false;
+        }
+        function toggleSidebar() {
+            sidebar.classList.toggle('closed');
+            sidebarOpen = !sidebarOpen;
+            overlay.style.display = (sidebarOpen && window.innerWidth <= 700) ? 'block' : 'none';
+        }
+
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        overlay.addEventListener('click', function() {
+            closeSidebar();
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 700) {
+                openSidebar();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth > 700) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>

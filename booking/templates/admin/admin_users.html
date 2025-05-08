@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Users | Booking Salon System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f6f7fc;
+        }
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #23395d;
+            color: #fff;
+            z-index: 1200;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            box-shadow: 0 2px 6px rgba(34,34,36,0.05);
+        }
+        .app-header .hamburger {
+            width: 34px;
+            height: 34px;
+            background: #23395d;
+            color: #fff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.2s;
+            font-size: 26px;
+        }
+        .app-header .hamburger:hover {
+            background: #385682;
+        }
+        .app-header .header-title {
+            margin-left: 15px;
+            font-size: 1.15em;
+            font-weight: 600;
+            letter-spacing: .05em;
+            flex: 1;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 220px;
+            height: calc(100vh - 60px);
+            background: #23395d;
+            color: #fff;
+            padding-top: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 6px rgba(34,34,36,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sidebar.closed {
+            transform: translateX(-220px);
+        }
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 8px;
+        }
+        .sidebar-nav a {
+            display: block;
+            padding: 16px 28px;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 1.08em;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: #385682;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 88px 40px 28px 40px;
+            transition: margin-left 0.3s ease;
+        }
+        .sidebar.closed ~ .main-content {
+            margin-left: 0;
+        }
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 170px;
+            }
+            .sidebar.closed {
+                transform: translateX(-170px);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 70px 10px 18px 10px;
+            }
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.2);
+            z-index: 900;
+        }
+        .sidebar.opened + .sidebar-overlay {
+            display: block;
+        }
+        .search-bar {
+            margin: 0 0 24px 0;
+        }
+        .search-bar input[type="text"] {
+            padding: 7px 12px;
+            font-size: 1em;
+            border: 1px solid #b6becc;
+            border-radius: 4px;
+            outline: none;
+            width: 180px;
+            max-width: 90vw;
+        }
+        .search-bar button {
+            padding: 7px 20px;
+            font-size: 1em;
+            background: #385682;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        table {
+            border-collapse: collapse;
+            background: #fff;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        th, td {
+            border: 1px solid #dee4f1;
+            padding: 9px 8px;
+            text-align: left;
+        }
+        th {
+            background: #e3ecfa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #f6f7fc; }
+        .user-admin-yes { color: #39844e; font-weight: bold; }
+        .user-admin-no { color: #b93c3c; }
+        /* Centered Pagination Styles Below */
+        .pagination {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 5px 11px;
+            background: #23395d;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 2px;
+            font-size: 1em;
+        }
+        .pagination span.current {
+            background: #385682;
+        }
+        .pagination a:hover {
+            background: #385682;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <button class="hamburger" id="sidebarToggle" aria-label="Open menu">
+            <span>&#9776;</span>
+        </button>
+        <span class="header-title">Admin Panel</span>
+    </div>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{% url 'admin_users' %}" class="{% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">Users</a>
+            <a href="{% url 'admin_services' %}" class="{% if request.resolver_match.url_name == 'admin_services' %}active{% endif %}">Services</a>
+            <a href="{% url 'admin_servicecategory_list' %}" class="{% if request.resolver_match.url_name == 'admin_servicecategory_list' %}active{% endif %}">Service Categories</a>
+            <a href="{% url 'admin_bookings' %}" class="{% if request.resolver_match.url_name == 'admin_bookings' %}active{% endif %}">Bookings</a>
+            <a href="{% url 'admin_schedule' %}" class="{% if request.resolver_match.url_name == 'admin_schedule' %}active{% endif %}">Schedules</a>
+            <a href="{% url 'admin_logout' %}" class="logout">Logout</a>
+        </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
+        <h1 style="color:#23395d;">Manage Users</h1>
+        <form class="search-bar" method="get">
+            {{ form.non_field_errors }}
+            {% for field in form.visible_fields %}
+                {{ field }}
+                {% for error in field.errors %}
+                    <div class="errorlist">{{ error }}</div>
+                {% endfor %}
+            {% endfor %}
+            <button type="submit">Search</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    <th>Admin?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.fullname }}</td>
+                    <td>
+                        {% if user.is_admin %}
+                            <span class="user-admin-yes">Yes</span>
+                        {% else %}
+                            <span class="user-admin-no">No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            {% if users.has_previous %}
+                <a href="?page={{ users.previous_page_number }}{% if form.data.q %}&q={{ form.data.q }}{% elif search_query %}&q={{ search_query }}{% endif %}">&laquo; Prev</a>
+            {% endif %}
+            <span class="current">Page {{ users.number }} of {{ users.paginator.num_pages }}</span>
+            {% if users.has_next %}
+                <a href="?page={{ users.next_page_number }}{% if form.data.q %}&q={{ form.data.q }}{% elif search_query %}&q={{ search_query }}{% endif %}">Next &raquo;</a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const toggle = document.getElementById("sidebarToggle");
+        const main = document.getElementById("mainContent");
+        const overlay = document.getElementById("sidebarOverlay");
+        let sidebarOpen = true;
+
+        // Initial state: sidebar is open on load
+        function openSidebar() {
+            sidebar.classList.remove('closed');
+            overlay.style.display = (window.innerWidth <= 700) ? 'block' : 'none';
+            sidebarOpen = true;
+        }
+        function closeSidebar() {
+            sidebar.classList.add('closed');
+            overlay.style.display = 'none';
+            sidebarOpen = false;
+        }
+        function toggleSidebar() {
+            sidebar.classList.toggle('closed');
+            sidebarOpen = !sidebarOpen;
+            overlay.style.display = (sidebarOpen && window.innerWidth <= 700) ? 'block' : 'none';
+        }
+
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        overlay.addEventListener('click', function() {
+            closeSidebar();
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 700) {
+                openSidebar();
+            }
+        });
+
+        // Initial layout
+        window.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth > 700) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, #f7e7ff 0%, #e7f0ff 100%);
+    min-height: 100vh;
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.edit-profile-content {
+    width: 100%;
+    min-height: 89vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 46px 4vw 30px 4vw;
+    box-sizing: border-box;
+}
+.edit-profile-content h1 {
+    color: #7044ea;
+    font-size: 1.56rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin-bottom: 26px;
+    text-align: center;
+}
+.edit-profile-form {
+    background: #fff;
+    border-radius: 14px;
+    max-width: 480px;
+    width: 100%;
+    padding: 32px 32px 28px 32px;
+    box-shadow: 0 6px 22px rgba(60,38,110,0.11);
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.edit-profile-form label {
+    font-weight: 500;
+    color: #7044ea;
+    margin-bottom: 7px;
+    display: block;
+}
+.edit-profile-form input[type="text"],
+.edit-profile-form input[type="email"],
+.edit-profile-form input[type="password"],
+.edit-profile-form input[type="file"],
+.edit-profile-form textarea,
+.edit-profile-form select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.2px solid #ded1eb;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    background: #f7f5ff;
+    color: #222;
+    font-size: 1.04rem;
+    transition: border-color 0.16s, background 0.16s;
+    box-sizing: border-box;
+}
+.edit-profile-form input:focus,
+.edit-profile-form select:focus,
+.edit-profile-form textarea:focus {
+    border-color: #7044ea;
+    background: #fff;
+    outline: none;
+}
+.edit-profile-form button[type="submit"] {
+    background: #7044ea;
+    color: #fff;
+    border-radius: 7px;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 1.07em;
+    cursor: pointer;
+    box-shadow: 0 1px 8px 0 rgba(112,68,234,0.10);
+    transition: background 0.18s, color 0.18s;
+    margin-right: 14px;
+    margin-top: 6px;
+}
+.edit-profile-form button[type="submit"]:hover {
+    background: #8a6bd3;
+    color: #fff;
+}
+.edit-profile-cancel {
+    margin-top: 17px;
+    text-align: center;
+}
+.edit-profile-cancel .cancel-link {
+    display: inline-block;
+    color: #7044ea;
+    border: 1.7px solid #7044ea;
+    background: none;
+    padding: 9px 26px;
+    margin: 0 auto;
+    font-size: 1em;
+    font-weight: 500;
+    border-radius: 7px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-sizing: border-box;
+}
+.edit-profile-cancel .cancel-link:hover,
+.edit-profile-cancel .cancel-link:focus {
+    color: #fff;
+    background: #7044ea;
+    text-decoration: none;
+    border-color: #473182;
+}
+.edit-profile-error {
+    color: #d7263d;
+    background: #fff1f2;
+    border: 1px solid #ffd6d6;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 11px 17px;
+    font-size: 1.01em;
+    margin-bottom: 16px;
+    margin-top: 14px;
+    text-align: left;
+    max-width: 480px;
+}
+@media (max-width: 600px) {
+    .edit-profile-content {
+        padding: 32px 3vw 9px 3vw;
+    }
+    .edit-profile-form {
+        max-width: 99vw;
+        padding: 19px 4vw 15px 4vw;
+    }
+    .edit-profile-cancel .cancel-link {
+        width: 98vw;
+        max-width: 310px;
+        padding: 10px 0;
+    }
+    .edit-profile-error {
+        max-width: 98vw;
+        font-size: 0.98em;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-content">
+    <h1>Edit Your Profile</h1>
+    <form method="post" class="edit-profile-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+    </form>
+    <div class="edit-profile-cancel">
+        <a href="{% url 'profile' %}" class="cancel-link">Cancel</a>
+    </div>
+    {% if form.errors %}
+        <div class="edit-profile-error">
+            <strong>Please correct the errors below.</strong>
+            {{ form.errors }}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

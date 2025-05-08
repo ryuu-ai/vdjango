@@ -1,0 +1,175 @@
+
+{% extends "base.html" %}
+
+{% block title %}Customer Feedbacks{% endblock %}
+
+{% block extra_head %}
+<style>
+body {
+    background: linear-gradient(100deg, var(--accent3, #f7e7ff) 0%, #e7f0ff 100%);
+}
+.feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 2em;
+    margin-top: 2em;
+}
+.feedback-item {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: box-shadow 0.2s;
+}
+.feedback-item:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+}
+.feedback-header {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+.service-name {
+    font-weight: bold;
+    color: #2a2a2a;
+}
+.rating {
+    color: gold;
+    font-size: 1.1em;
+    margin-left: 8px;
+}
+.feedback-comment {
+    font-style: italic;
+    color: #444;
+    margin-bottom: 8px;
+    margin-top: 6px;
+    flex: 1 1 auto;
+    min-height: 32px;
+}
+.feedback-user {
+    color: #555;
+    font-size: 1em;
+}
+.feedback-date {
+    font-size: 0.88em;
+    color: #888;
+    margin-left: 8px;
+}
+@media (max-width: 900px) {
+    .feedback-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+    .feedback-grid { grid-template-columns: 1fr; gap: 10px; }
+}
+nav.pagination-nav {
+    margin: 18px 0 6px 0;
+    font-size: 0.98rem;
+    border-radius: 11px;
+    padding: 7px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+nav.pagination-nav .pagination-info {
+    color: #7044ea;
+    font-weight: 500;
+    margin-bottom: 0;
+    text-align: center;
+}
+nav.pagination-nav div.page-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+nav.pagination-nav a,
+nav.pagination-nav strong {
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+nav.pagination-nav a {
+    background: #ede1fc;
+    color: #7044ea;
+    transition: background 0.16s, color 0.16s;
+    border: 1px solid #e0d9f9;
+}
+nav.pagination-nav a:hover {
+    background: #7044ea;
+    color: #fff;
+}
+nav.pagination-nav strong {
+    background: #7044ea;
+    color: #fff;
+    font-weight: 700;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1>What Our Customers Say</h1>
+    {% if feedbacks %}
+        <div class="feedback-grid">
+            {% for feedback in feedbacks %}
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="service-name">{{ feedback.service.name }}</span>
+                        &middot;
+                        <span class="rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= feedback.rating %}
+                                    ★
+                                {% else %}
+                                    <span style="color: #ccc;">★</span>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <div class="feedback-comment">
+                        "{{ feedback.comment|escape }}"
+                    </div>
+                    <div class="feedback-user">
+                        by {{ feedback.user.fullname|default:feedback.user.username }}
+                        <span class="feedback-date">
+                            on {{ feedback.created_at|date:'N j, Y' }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if is_paginated %}
+        <nav class="pagination-nav" aria-label="List Pagination">
+            <span class="pagination-info">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            <div class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">&lsaquo; Prev</a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <strong>{{ num }}</strong>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next &rsaquo;</a>
+                {% endif %}
+            </div>
+        </nav>
+        {% endif %}
+    {% else %}
+        <p>No feedback has been submitted yet.</p>
+    {% endif %}
+{% endblock %}
